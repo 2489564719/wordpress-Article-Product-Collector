@@ -5,8 +5,10 @@
 ## 一、安装与启用
 
 1. 确认目录结构：
-   - 插件目录：`web/app/plugins/sbb-collector/`
-   - 其中包含：`sbb-collector.php` 和 `collector/` 目录。
+   1. 将插件文件拖入项目plugins
+   2. 插件目录：`web/app/plugins/sbb-collector/`
+   3. 其中包含：`sbb-collector.php` 和 `collector/` 目录。
+
 2. 进入 WordPress 后台 → 插件：
    - 找到 `SBB Collector` 插件，点击“启用”。
 3. 启用成功后，左侧菜单会出现“采集器”主菜单。所有功能入口都在这里。
