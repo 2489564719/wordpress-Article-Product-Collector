@@ -1,16 +1,16 @@
-# SBB 采集器使用说明
+# 蜈蚣采集器使用说明
 
-> 本文档针对插件版本：`web/app/plugins/sbb-collector`。
+![CENTIPEDE CRAWLER](CENTIPEDE%20CRAWLER.png)
+
+> 项目地址: https://github.com/2489564719/wordpress-Article-Product-Collector
 
 ## 一、安装与启用
 
 1. 确认目录结构：
-   1. 将插件文件拖入项目plugins
-   2. 插件目录：`web/app/plugins/sbb-collector/`
-   3. 其中包含：`sbb-collector.php` 和 `collector/` 目录。
-
+   1. 将插件文件夹`/centipede-collector`拖入项目plugins
+   2. 确保目录结构：`/plugins/centipede-collector/`
 2. 进入 WordPress 后台 → 插件：
-   - 找到 `SBB Collector` 插件，点击“启用”。
+   - 找到 `Centipede Collector` 插件，点击“启用”。
 3. 启用成功后，左侧菜单会出现“采集器”主菜单。所有功能入口都在这里。
 
 > 注意：
@@ -32,28 +32,7 @@
 
 说明：
 - 不同模式会使用各自独立的“采集配置 / 暂存数据 / 发布配置”。
-- 切换模式不会丢数据，只是切换“当前操作视图”。
-
-> 若站点未启用 WooCommerce：
-> - 将强制使用“文章采集”模式，后台也不会显示“产品采集”的单选项。
-
-### 2.2 CSF 元字段前缀
-
-用于适配不同站点的 CSF 元数据存储方式。
-
-字段：
-- `CSF 元字段前缀（产品）`
-  - 默认值：`Metabox_CSF_Options`
-  - 对应产品的 meta_key，例如：
-    - `meta_key = Metabox_CSF_Options`
-    - `meta_value = { csf_xxx: '...', csf_yyy: '...' }`
-- `CSF 元字段前缀（文章）`
-  - 默认值：`Metabox_CSF_Post_Options`
-
-使用建议：
-- 若你的项目就是用默认前缀，保持默认即可。
-- 若其他站点使用了自定义的 CSF meta_key：
-  - 直接在这里填入它们实际使用的 meta_key，采集器会自动使用新的前缀写入数据。
+- 切换模式不会丢失数据，只是切换“当前操作视图”。
 
 ---
 
@@ -71,8 +50,41 @@
    - 列表页 URL 或单页 URL 模板。
    - 标题、正文、图片等字段的 CSS 选择器 / XPath。
 3. 保存后，可在“单链接调试”或“批量采集”中选择该配置执行采集。
+4. 配置示例：
 
-> 具体字段含义已在配置页面中有说明，这里不展开。
+   ```
+   [
+       "title",
+       "desc",
+       {
+           "name": "文章标题",
+           "selector": "header h1",
+           "type": "text"
+       },
+       {
+           "name": "索引",
+           "selector": ".blog-box .list h4",
+           "type": "html"
+       },
+       {
+           "name": "正文",
+           "selector": ".content-wrapper .content",
+           "type": "html"
+       },
+       {
+           "name": "文章分类",
+           "value": "evse"
+       },
+       {
+           "name": "OG 图片",
+           "selector": "meta[property=\"og:image\"]",
+           "type": "attr",
+           "attr": "content"
+       }
+   ]
+   ```
+
+   
 
 ---
 
@@ -101,7 +113,7 @@
 流程（简略）：
 1. 选择采集配置。
 2. 填写 URL 列表或入口页信息。
-3. 启动批量任务，任务会异步运行，结果写入“采集暂存管理”。
+3. 启动批量任务，任务会异步运行，过程可在计划任务中查看，结果写入“采集暂存管理”。
 
 ### 4.3 采集暂存管理
 
@@ -122,7 +134,7 @@
 
 菜单路径：`采集器 → 发布配置`
 
-这是采集器的核心：定义“采集字段 → WordPress/产品字段/CSF/ACF”的映射规则。
+这是采集器的核心：定义“采集字段 → WordPress post字段/产品字段/CSF/ACF”的映射规则。
 
 ### 5.1 字段映射
 
@@ -138,8 +150,6 @@
 - SEO 字段（Yoast）：
   - `_yoast_wpseo_title`
   - `_yoast_wpseo_metadesc`
-- 产品字段：
-  - `_sku` 等
 - CSF 字段：
   - 根据你的“自定义 CSF 字段”配置动态生成
 - ACF 字段：
@@ -246,14 +256,15 @@
 
 ## 七、常见建议与注意事项
 
-1. 先配置好“采集配置”，再做“发布配置”。
-2. 发布配置中的映射和高级字段设置是“按当前模式（产品/文章）生效”的，切换模式时有独立的一套。
-3. CSF/ACF 建议：
+1. 使用前备份数据库！！！网络安全千万条，数据安全第一条。
+2. 先配置好“采集配置”，采集后，发布前，先做“发布配置”。
+3. 发布配置中的映射和高级字段设置是“按当前模式（产品/文章）生效”的，切换模式时有独立的一套。
+4. CSF/ACF 建议：
    - 先在主题或站点中配置好这些字段；
    - 再来采集器中填写：
      - CSF：前缀 + 字段 ID（通过“采集器设置 + 自定义 CSF 字段”配置）。
      - ACF：meta_key。
-4. 若迁移到其他站点：
+5. 若迁移到其他站点：
    - 只需调整：
      - `采集器设置` 中的 CSF 前缀；
      - `发布配置` 中的 CSF 字段 ID / ACF meta_key；
