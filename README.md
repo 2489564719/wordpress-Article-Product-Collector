@@ -1,4 +1,4 @@
-# SBB 采集器使用说明
+# 你好
 
 > 本文档针对插件版本：`web/app/plugins/sbb-collector`。
 
